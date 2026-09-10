@@ -29,6 +29,7 @@
     --cat-aktiv-rgb:62,127,176;
     --cat-zuhause-rgb:166,124,61;
     --cat-reise-rgb:47,111,138;
+    --cat-urlaub-rgb:193,80,112;
     --skyline-rgb:28,36,32;
   }
   @media (prefers-color-scheme: dark){
@@ -37,7 +38,7 @@
       --ink-soft:#A6B5AC; --ink-faint:#6D7C73; --border:#2C3931; --accent:#67BC9E;
       --accent-ink:#0C1613; --accent-soft:#233A32; --danger:#E39178; --shadow:rgba(0,0,0,0.45);
       --cat-ausflug-rgb:103,188,158; --cat-essen-rgb:224,158,110; --cat-kultur-rgb:196,164,209;
-      --cat-aktiv-rgb:138,184,224; --cat-zuhause-rgb:212,171,110; --cat-reise-rgb:110,178,204;
+      --cat-aktiv-rgb:138,184,224; --cat-zuhause-rgb:212,171,110; --cat-reise-rgb:110,178,204; --cat-urlaub-rgb:224,140,160;
       --skyline-rgb:233,240,234;
     }
   }
@@ -46,7 +47,7 @@
     --ink-soft:#A6B5AC; --ink-faint:#6D7C73; --border:#2C3931; --accent:#67BC9E;
     --accent-ink:#0C1613; --accent-soft:#233A32; --danger:#E39178; --shadow:rgba(0,0,0,0.45);
     --cat-ausflug-rgb:103,188,158; --cat-essen-rgb:224,158,110; --cat-kultur-rgb:196,164,209;
-    --cat-aktiv-rgb:138,184,224; --cat-zuhause-rgb:212,171,110; --cat-reise-rgb:110,178,204;
+    --cat-aktiv-rgb:138,184,224; --cat-zuhause-rgb:212,171,110; --cat-reise-rgb:110,178,204; --cat-urlaub-rgb:224,140,160;
     --skyline-rgb:233,240,234;
   }
 
@@ -156,6 +157,7 @@
   .chip.cat-aktiv.active{ background:rgba(var(--cat-aktiv-rgb),0.15); border-color:rgb(var(--cat-aktiv-rgb)); color:rgb(var(--cat-aktiv-rgb)); }
   .chip.cat-zuhause.active{ background:rgba(var(--cat-zuhause-rgb),0.15); border-color:rgb(var(--cat-zuhause-rgb)); color:rgb(var(--cat-zuhause-rgb)); }
   .chip.cat-reise.active{ background:rgba(var(--cat-reise-rgb),0.15); border-color:rgb(var(--cat-reise-rgb)); color:rgb(var(--cat-reise-rgb)); }
+  .chip.cat-urlaub.active{ background:rgba(var(--cat-urlaub-rgb),0.15); border-color:rgb(var(--cat-urlaub-rgb)); color:rgb(var(--cat-urlaub-rgb)); }
 
   .meta-cat.cat-ausflug{ color:rgb(var(--cat-ausflug-rgb)); }
   .meta-cat.cat-essen{ color:rgb(var(--cat-essen-rgb)); }
@@ -163,6 +165,7 @@
   .meta-cat.cat-aktiv{ color:rgb(var(--cat-aktiv-rgb)); }
   .meta-cat.cat-zuhause{ color:rgb(var(--cat-zuhause-rgb)); }
   .meta-cat.cat-reise{ color:rgb(var(--cat-reise-rgb)); }
+  .meta-cat.cat-urlaub{ color:rgb(var(--cat-urlaub-rgb)); }
 
   section.list{ margin-top:22px; display:flex; flex-direction:column; gap:10px; }
 
@@ -178,6 +181,7 @@
   .card.cat-aktiv{ border-left-color:rgb(var(--cat-aktiv-rgb)); }
   .card.cat-zuhause{ border-left-color:rgb(var(--cat-zuhause-rgb)); }
   .card.cat-reise{ border-left-color:rgb(var(--cat-reise-rgb)); }
+  .card.cat-urlaub{ border-left-color:rgb(var(--cat-urlaub-rgb)); }
   .card.done{ border-left-color:var(--border); }
   .check{
     width:22px; height:22px; border-radius:50%; border:1.6px solid var(--border);
@@ -303,6 +307,7 @@
     { key:'aktiv',   label:'Aktiv & Sport', icon:iconMountain(), cls:'cat-aktiv' },
     { key:'zuhause', label:'Zuhause', icon:iconHouse(), cls:'cat-zuhause' },
     { key:'reise',   label:'Reisen', icon:iconPlane(), cls:'cat-reise' },
+    { key:'urlaub',  label:'Urlaub', icon:iconSuitcase(), cls:'cat-urlaub' },
   ];
   var PALETTE = ['#C1552E','#4C5BA6','#B08B2A','#3E8F6E','#9457A6','#3E7FB0','#B0473F','#2F8F8A'];
 
@@ -347,6 +352,8 @@
       '<rect x="756" y="76" width="22" height="34"/>' +
     '</svg>';
   }
+
+  function iconSuitcase(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="3" y="7" width="14" height="9.5" rx="1.4"/><path d="M7.5 7V5.3c0-.7.6-1.3 1.3-1.3h2.4c.7 0 1.3.6 1.3 1.3V7"/><path d="M3 11h14"/></svg>'; }
 
   function iconEdit(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M12.9 3.9 16.1 7.1 6.5 16.7 3 17.5l.8-3.5Z"/></svg>'; }
 
