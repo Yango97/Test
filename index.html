@@ -78,17 +78,6 @@
   .title-block h1{ font-size:2.6rem; margin:2px 0 4px; line-height:1.05; }
   .title-block p{ margin:0; color:var(--ink-soft); font-size:0.95rem; max-width:46ch; }
 
-  .whoami{
-    display:flex; align-items:center; gap:8px; background:var(--surface);
-    border:1px solid var(--border); border-radius:999px; padding:6px 8px 6px 6px;
-    font-size:0.82rem; color:var(--ink-soft); white-space:nowrap;
-  }
-  .dot{ width:10px; height:10px; border-radius:50%; flex:none; box-shadow:0 0 0 2px var(--surface); }
-  .whoami button{
-    background:none; border:none; color:var(--accent); cursor:pointer;
-    font-size:0.8rem; padding:2px 4px; text-decoration:underline; text-underline-offset:2px;
-  }
-
   .progress-row{ display:flex; align-items:center; gap:12px; }
   .progress-track{
     flex:1; height:8px; border-radius:999px; background:var(--surface-2);
@@ -109,18 +98,15 @@
     display:flex; align-items:center; gap:10px; background:var(--bg); border:1px solid var(--border);
     border-radius:var(--radius-md); padding:6px 6px 6px 16px; margin-bottom:16px;
   }
-  .gate-input-row .dot{ box-shadow:none; }
-  #nameInput{
+  #passInput{
     flex:1; border:none; background:transparent; outline:none; font-family:inherit;
     font-size:1rem; color:var(--ink); min-width:0; padding:10px 0;
   }
-  #nameSubmit{
+  #passSubmit{
     background:var(--accent); color:var(--accent-ink); border:none;
     border-radius:calc(var(--radius-md) - 4px); padding:11px 18px;
     font-weight:700; font-size:0.92rem; cursor:pointer; flex:none;
   }
-  #nameSubmit:disabled{ opacity:0.45; cursor:default; }
-  .gate-hint{ font-size:0.78rem; color:var(--ink-faint); }
   .gate-error{ font-size:0.82rem; color:var(--danger); margin:-8px 0 14px; min-height:1.1em; }
 
   .composer{
@@ -202,14 +188,6 @@
   }
   .meta-cat{ display:inline-flex; align-items:center; gap:5px; }
   .meta-cat svg{ width:13px; height:13px; }
-  .meta-who{ display:inline-flex; align-items:center; gap:5px; }
-  .meta-who .dot{ width:7px; height:7px; box-shadow:none; }
-
-  .match-badge{
-    display:inline-flex; align-items:center; gap:4px; background:var(--accent-soft);
-    color:var(--accent); border-radius:999px; padding:3px 9px 3px 7px; font-weight:700; font-size:0.72rem;
-  }
-  .match-badge svg{ width:11px; height:11px; }
 
   .card.editing{ flex-direction:column; align-items:stretch; }
   .edit-row{ display:flex; flex-wrap:wrap; gap:8px; }
@@ -310,7 +288,6 @@
     { key:'reise',   label:'Reisen', icon:iconPlane(), cls:'cat-reise' },
     { key:'urlaub',  label:'Urlaub', icon:iconSuitcase(), cls:'cat-urlaub' },
   ];
-  var PALETTE = ['#C1552E','#4C5BA6','#B08B2A','#3E8F6E','#9457A6','#3E7FB0','#B0473F','#2F8F8A'];
 
   function iconCompass(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7.4"/><path d="M12.6 7.4 9.4 9.4 7.4 12.6 10.6 10.6Z" fill="currentColor" stroke="none"/></svg>'; }
   function iconCup(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.5 6h9v5.2a3.6 3.6 0 0 1-3.6 3.6H8.1A3.6 3.6 0 0 1 4.5 11.2Z"/><path d="M13.5 7.4h1a2 2 0 0 1 0 4h-1"/><path d="M6.5 3.2c-.6.7-.2 1 0 1.6M9 3.2c-.6.7-.2 1 0 1.6"/></svg>'; }
@@ -362,19 +339,12 @@
 
   function catByKey(k){ for (var i=0;i<CATEGORIES.length;i++) if (CATEGORIES[i].key===k) return CATEGORIES[i]; return CATEGORIES[0]; }
 
-  function hashColor(name){
-    var h = 0;
-    for (var i=0;i<name.length;i++){ h = (h*31 + name.charCodeAt(i)) >>> 0; }
-    return PALETTE[h % PALETTE.length];
-  }
-
   function esc(s){
     return String(s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
 
-  var LS_KEY = 'abenteuerliste:name';
   var PASSCODE_LS_KEY = 'abenteuerliste:unlocked';
   var app = document.getElementById('app');
   var db = null;
@@ -382,11 +352,6 @@
   var filter = 'all';
   var activeTab = 'offen';
   var editingId = null;
-
-  function me(){
-    var n = localStorage.getItem(LS_KEY);
-    return n ? { name:n, color:hashColor(n) } : null;
-  }
 
   function renderSetupNeeded(){
     app.innerHTML =
@@ -438,50 +403,11 @@
     }
   }
 
-  function renderGate(){
-    app.innerHTML =
-      '<div class="skyline" style="margin-top:14vh;">' + skylineSvg() + '</div>' +
-      '<div class="gate" style="margin-top:0;">' +
-        '<div class="compass">' + iconCompassBig() + '</div>' +
-        '<h1>Unsere Bucket List</h1>' +
-        '<p>Bevor es losgeht: Wie sollen wir dich hier nennen?</p>' +
-        '<div class="gate-input-row">' +
-          '<div class="dot" id="gateDot" style="background:' + PALETTE[0] + '"></div>' +
-          '<input id="nameInput" type="text" maxlength="24" placeholder="Dein Name" autocomplete="off" />' +
-          '<button id="nameSubmit" disabled>Los geht’s</button>' +
-        '</div>' +
-        '<div class="gate-hint">Nur für diesen Browser gespeichert — jede:r meldet sich einmal an.</div>' +
-      '</div>';
-
-    var input = document.getElementById('nameInput');
-    var dot = document.getElementById('gateDot');
-    var submit = document.getElementById('nameSubmit');
-
-    input.addEventListener('input', function(){
-      var v = input.value.trim();
-      submit.disabled = v.length === 0;
-      dot.style.background = v ? hashColor(v) : PALETTE[0];
-    });
-    input.addEventListener('keydown', function(e){
-      if (e.key === 'Enter' && !submit.disabled) confirmName();
-    });
-    submit.addEventListener('click', confirmName);
-    input.focus();
-
-    function confirmName(){
-      var v = input.value.trim();
-      if (!v) return;
-      localStorage.setItem(LS_KEY, v);
-      boot();
-    }
-  }
-
   function renderFallback(msg){
     app.innerHTML = '<div class="fallback">' + esc(msg) + '</div>';
   }
 
   function renderApp(){
-    var user = me();
     var doneCount = items.filter(function(i){ return i.status==='erledigt'; }).length;
     var total = items.length;
     var pct = total ? Math.round(doneCount/total*100) : 0;
@@ -491,7 +417,6 @@
     html += '<header class="top">';
     html += '  <div class="top-row">';
     html += '    <div class="title-block"><h1>Unsere Bucket List</h1><p>Alles, was wir zusammen erleben wollen.</p></div>';
-    html += '    <div class="whoami"><span class="dot" style="background:' + user.color + '"></span>' + esc(user.name) + '<button id="changeName">ändern</button></div>';
     html += '  </div>';
     if (total > 0){
       html += '  <div class="progress-row"><div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div><div class="progress-label mono">' + doneCount + ' / ' + total + ' erledigt</div></div>';
@@ -517,10 +442,10 @@
     CATEGORIES.forEach(function(c){
       html += '  <button class="chip ' + c.cls + (filter===c.key?' active':'') + '" data-filter="' + c.key + '">' + c.icon + c.label + '</button>';
     });
-    html += '  <button class="chip' + (filter==='favs'?' active':'') + '" data-filter="favs">' + iconHeart() + 'Beide wollen das</button>';
+    html += '  <button class="chip' + (filter==='favs'?' active':'') + '" data-filter="favs">' + iconHeart() + 'Favoriten</button>';
     html += '</div>';
 
-    var currentList = applyFilter(activeTab === 'offen' ? openAll : doneAll, user);
+    var currentList = applyFilter(activeTab === 'offen' ? openAll : doneAll);
 
     html += '<section class="list">';
     if (total === 0){
@@ -531,17 +456,17 @@
       currentList.sort(function(a,b){
         return activeTab === 'offen' ? (a.createdAt||0) - (b.createdAt||0) : (b.createdAt||0) - (a.createdAt||0);
       });
-      html += currentList.map(function(i){ return itemCard(i, user); }).join('');
+      html += currentList.map(function(i){ return itemCard(i); }).join('');
     }
     html += '</section>';
 
     app.innerHTML = html;
-    wireApp(user);
+    wireApp();
   }
 
-  function applyFilter(list, user){
+  function applyFilter(list){
     if (filter === 'all') return list;
-    if (filter === 'favs') return list.filter(function(i){ return (i.likedBy||[]).length >= 2; });
+    if (filter === 'favs') return list.filter(function(i){ return i.liked; });
     return list.filter(function(i){ return i.category === filter; });
   }
 
@@ -551,9 +476,8 @@
       '<div class="suggestions">' + suggestions.map(function(s){ return '<button class="suggestion" data-suggest="' + esc(s) + '">' + esc(s) + '</button>'; }).join('') + '</div></div>';
   }
 
-  function itemCard(i, user){
+  function itemCard(i){
     var cat = catByKey(i.category);
-    var mine = i.addedBy === user.name;
 
     if (i.id === editingId){
       return '' +
@@ -573,8 +497,6 @@
         '</div>';
     }
 
-    var liked = (i.likedBy||[]).indexOf(user.name) !== -1;
-    var isMatch = (i.likedBy||[]).length >= 2;
     return '' +
       '<div class="card ' + cat.cls + (i.status==='erledigt' ? ' done' : '') + '" data-id="' + i.id + '">' +
         '<button class="check" data-action="toggle" data-id="' + i.id + '">' + iconCheck() + '</button>' +
@@ -582,24 +504,17 @@
           '<div class="card-text">' + esc(i.text) + '</div>' +
           '<div class="card-meta">' +
             '<span class="meta-cat ' + cat.cls + '">' + cat.icon + cat.label + '</span>' +
-            '<span class="meta-who"><span class="dot" style="background:' + (i.addedByColor||'#999') + '"></span>' + esc(i.addedBy) + '</span>' +
-            (isMatch ? '<span class="match-badge">' + iconHeart() + 'Beide dabei</span>' : '') +
           '</div>' +
         '</div>' +
         '<div class="card-actions">' +
-          '<button class="icon-btn' + (liked?' liked':'') + '" data-action="like" data-id="' + i.id + '" title="Gefällt mir">' + iconHeart() + '</button>' +
-          (mine ? '<button class="icon-btn" data-action="edit" data-id="' + i.id + '" title="Bearbeiten">' + iconEdit() + '</button>' : '') +
-          (mine ? '<button class="icon-btn" data-action="delete" data-id="' + i.id + '" title="Löschen">' + iconTrash() + '</button>' : '') +
+          '<button class="icon-btn' + (i.liked?' liked':'') + '" data-action="like" data-id="' + i.id + '" title="Favorit">' + iconHeart() + '</button>' +
+          '<button class="icon-btn" data-action="edit" data-id="' + i.id + '" title="Bearbeiten">' + iconEdit() + '</button>' +
+          '<button class="icon-btn" data-action="delete" data-id="' + i.id + '" title="Löschen">' + iconTrash() + '</button>' +
         '</div>' +
       '</div>';
   }
 
-  function wireApp(user){
-    document.getElementById('changeName').addEventListener('click', function(){
-      localStorage.removeItem(LS_KEY);
-      renderGate();
-    });
-
+  function wireApp(){
     var input = document.getElementById('itemInput');
     var select = document.getElementById('categorySelect');
     var addBtn = document.getElementById('addBtn');
@@ -612,9 +527,7 @@
         text: text,
         category: select.value,
         status: 'offen',
-        addedBy: user.name,
-        addedByColor: user.color,
-        likedBy: [],
+        liked: false,
         createdAt: Date.now()
       }).finally(function(){ addBtn.disabled = false; });
       input.value = '';
@@ -645,10 +558,7 @@
         if (action === 'toggle'){
           ref.update({ status: item.status === 'erledigt' ? 'offen' : 'erledigt' });
         } else if (action === 'like'){
-          var liked = (item.likedBy||[]).slice();
-          var idx = liked.indexOf(user.name);
-          if (idx === -1) liked.push(user.name); else liked.splice(idx,1);
-          ref.update({ likedBy: liked });
+          ref.update({ liked: !item.liked });
         } else if (action === 'delete'){
           ref.delete();
         } else if (action === 'edit'){
@@ -673,23 +583,17 @@
     });
   }
 
-  function boot(){
-    var user = me();
-    if (!user){ renderGate(); return; }
-    renderApp();
-  }
-
   function initApp(){
     firebase.initializeApp(window.FIREBASE_CONFIG);
     db = firebase.firestore();
 
-    boot();
+    renderApp();
 
     db.collection('items').onSnapshot(function(snap){
       items = snap.docs.map(function(doc){ return Object.assign({ id: doc.id }, doc.data()); });
-      if (me()) renderApp();
+      renderApp();
     }, function(err){
-      if (me()) renderFallback('Verbindung zur Liste verloren (' + err.code + '). Bitte Seite neu laden.');
+      renderFallback('Verbindung zur Liste verloren (' + err.code + '). Bitte Seite neu laden.');
     });
   }
 
