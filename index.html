@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Unsere Abenteuerliste</title>
-<meta name="description" content="Eine gemeinsame Liste für Dinge, die wir zusammen unternehmen wollen." />
+<title>Unsere Bucket List</title>
+<meta name="description" content="Unsere gemeinsame Bucket List für Dinge, die wir zusammen unternehmen wollen." />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" />
 <style>
   :root{
@@ -214,6 +214,28 @@
   }
   .match-badge svg{ width:11px; height:11px; }
 
+  .card.editing{ flex-direction:column; align-items:stretch; }
+  .edit-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .edit-input{
+    flex:1 1 200px; min-width:0; border:1px solid var(--border); background:var(--bg);
+    border-radius:var(--radius-sm); padding:9px 12px; font-family:inherit;
+    font-size:0.96rem; color:var(--ink); outline:none;
+  }
+  .edit-input:focus{ border-color:var(--accent); }
+  .edit-select{
+    border:1px solid var(--border); background:var(--bg); border-radius:var(--radius-sm);
+    padding:9px 10px; font-family:inherit; font-size:0.88rem; color:var(--ink); flex:0 0 auto;
+  }
+  .edit-actions{ display:flex; gap:8px; margin-top:10px; }
+  .edit-save{
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:var(--radius-sm);
+    padding:9px 16px; font-weight:700; font-size:0.86rem; cursor:pointer;
+  }
+  .edit-cancel{
+    background:none; color:var(--ink-soft); border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:9px 16px; font-size:0.86rem; cursor:pointer;
+  }
+
   .card-actions{ display:flex; align-items:center; gap:4px; flex:none; }
   .icon-btn{
     background:none; border:none; cursor:pointer; color:var(--ink-faint);
@@ -224,13 +246,15 @@
   .icon-btn.liked{ color:var(--danger); }
   .icon-btn.liked svg{ fill:var(--danger); }
 
-  .done-toggle{
-    display:flex; align-items:center; gap:8px; cursor:pointer; background:var(--surface);
-    border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px;
-    margin-top:22px; color:var(--ink-soft); font-size:0.86rem; font-weight:600;
+  .tabs{ display:flex; gap:18px; border-bottom:1px solid var(--border); margin-top:26px; }
+  .tab{
+    background:none; border:none; cursor:pointer; padding:10px 2px 12px;
+    margin-bottom:-1px; border-bottom:2px solid transparent;
+    color:var(--ink-soft); font-weight:700; font-size:0.94rem;
   }
-  .done-toggle svg{ width:14px; height:14px; transition:transform .2s ease; }
-  .done-toggle.open svg{ transform:rotate(90deg); }
+  .tab.active{ color:var(--accent); border-bottom-color:var(--accent); }
+  .tab .count{ color:var(--ink-faint); font-weight:600; margin-left:2px; }
+  .tab.active .count{ color:var(--accent); }
 
   .empty{ text-align:center; padding:40px 20px; color:var(--ink-soft); }
   .empty svg{ width:34px; height:34px; color:var(--ink-faint); margin-bottom:10px; }
@@ -297,7 +321,6 @@
   function iconPlane(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M17 3 2.5 8.6l5 1.7m9.5-7.3L11.4 17l-1.9-5.1m7.5-8.9-9.9 9.4"/></svg>'; }
   function iconHeart(){ return '<svg viewBox="0 0 20 20" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M10 16.3S3 12.1 3 7.6A3.4 3.4 0 0 1 10 6.4a3.4 3.4 0 0 1 7 1.2c0 4.5-7 8.7-7 8.7Z"/></svg>'; }
   function iconTrash(){ return '<svg viewBox="0 0 20 20" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"><path d="M4.5 6h11M8 6V4.6c0-.6.5-1.1 1.1-1.1h1.8c.6 0 1.1.5 1.1 1.1V6M6 6l.6 9.2c0 .6.5 1 1.1 1h4.6c.6 0 1-.4 1.1-1L14 6"/></svg>'; }
-  function iconChevron(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg>'; }
   function iconCheck(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5 8 14l7.5-9"/></svg>'; }
   function iconCompassBig(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="10" cy="10" r="7.4"/><path d="M12.6 7.4 9.4 9.4 7.4 12.6 10.6 10.6Z" fill="currentColor" stroke="none"/></svg>'; }
   function skylineSvg(){
@@ -331,6 +354,8 @@
       '<rect x="756" y="76" width="22" height="34"/>' +
     '</svg>';
   }
+
+  function iconEdit(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M12.9 3.9 16.1 7.1 6.5 16.7 3 17.5l.8-3.5Z"/></svg>'; }
 
   function iconLock(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4.5" y="9" width="11" height="7.5" rx="1.6"/><path d="M6.8 9V6.3a3.2 3.2 0 0 1 6.4 0V9"/><circle cx="10" cy="12.6" r="1.1" fill="currentColor" stroke="none"/></svg>'; }
 
@@ -367,7 +392,8 @@
   var db = null;
   var items = [];
   var filter = 'all';
-  var doneOpen = false;
+  var activeTab = 'offen';
+  var editingId = null;
 
   function me(){
     var n = localStorage.getItem(LS_KEY);
@@ -429,7 +455,7 @@
       '<div class="skyline" style="margin-top:14vh;">' + skylineSvg() + '</div>' +
       '<div class="gate" style="margin-top:0;">' +
         '<div class="compass">' + iconCompassBig() + '</div>' +
-        '<h1>Unsere Abenteuerliste</h1>' +
+        '<h1>Unsere Bucket List</h1>' +
         '<p>Bevor es losgeht: Wie sollen wir dich hier nennen?</p>' +
         '<div class="gate-input-row">' +
           '<div class="dot" id="gateDot" style="background:' + PALETTE[0] + '"></div>' +
@@ -476,7 +502,7 @@
     html += '<div class="skyline">' + skylineSvg() + '</div>';
     html += '<header class="top">';
     html += '  <div class="top-row">';
-    html += '    <div class="title-block"><span class="eyebrow">Frankfurt &amp; Umgebung</span><h1>Unsere Abenteuerliste</h1><p>Alles, was wir zusammen erleben wollen — einer trägt es ein, beide können abhaken.</p></div>';
+    html += '    <div class="title-block"><span class="eyebrow">Frankfurt &amp; Umgebung</span><h1>Unsere Bucket List</h1><p>Alles, was wir zusammen erleben wollen — einer trägt es ein, beide können abhaken.</p></div>';
     html += '    <div class="whoami"><span class="dot" style="background:' + user.color + '"></span>' + esc(user.name) + '<button id="changeName">ändern</button></div>';
     html += '  </div>';
     if (total > 0){
@@ -490,6 +516,14 @@
     html += '  <button id="addBtn">Hinzufügen</button>';
     html += '</div>';
 
+    var openAll = items.filter(function(i){ return i.status !== 'erledigt'; });
+    var doneAll = items.filter(function(i){ return i.status === 'erledigt'; });
+
+    html += '<div class="tabs">';
+    html += '  <button class="tab' + (activeTab==='offen'?' active':'') + '" data-tab="offen">Offen <span class="count mono">' + openAll.length + '</span></button>';
+    html += '  <button class="tab' + (activeTab==='erledigt'?' active':'') + '" data-tab="erledigt">Erledigt <span class="count mono">' + doneAll.length + '</span></button>';
+    html += '</div>';
+
     html += '<div class="filters">';
     html += '  <button class="chip' + (filter==='all'?' active':'') + '" data-filter="all">Alle</button>';
     CATEGORIES.forEach(function(c){
@@ -498,29 +532,20 @@
     html += '  <button class="chip' + (filter==='favs'?' active':'') + '" data-filter="favs">' + iconHeart() + 'Beide wollen das</button>';
     html += '</div>';
 
-    var open = items.filter(function(i){ return i.status !== 'erledigt'; });
-    var done = items.filter(function(i){ return i.status === 'erledigt'; });
-    open = applyFilter(open, user);
-    var doneFiltered = applyFilter(done, user);
+    var currentList = applyFilter(activeTab === 'offen' ? openAll : doneAll, user);
 
     html += '<section class="list">';
     if (total === 0){
       html += emptyState();
-    } else if (open.length === 0){
-      html += '<div class="empty" style="padding:24px 0 4px;"><p>Keine offenen Ideen in diesem Filter.</p></div>';
+    } else if (currentList.length === 0){
+      html += '<div class="empty" style="padding:24px 0 4px;"><p>' + (activeTab==='offen' ? 'Keine offenen Ideen in diesem Filter.' : 'Noch nichts erledigt in diesem Filter.') + '</p></div>';
     } else {
-      open.sort(function(a,b){ return (a.createdAt||0) - (b.createdAt||0); });
-      html += open.map(function(i){ return itemCard(i, user); }).join('');
+      currentList.sort(function(a,b){
+        return activeTab === 'offen' ? (a.createdAt||0) - (b.createdAt||0) : (b.createdAt||0) - (a.createdAt||0);
+      });
+      html += currentList.map(function(i){ return itemCard(i, user); }).join('');
     }
     html += '</section>';
-
-    if (done.length > 0){
-      html += '<div class="done-toggle' + (doneOpen?' open':'') + '" id="doneToggle">' + iconChevron() + '<span>Erledigt (' + done.length + ')</span></div>';
-      if (doneOpen){
-        doneFiltered.sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
-        html += '<section class="list" style="margin-top:10px;">' + doneFiltered.map(function(i){ return itemCard(i, user); }).join('') + '</section>';
-      }
-    }
 
     app.innerHTML = html;
     wireApp(user);
@@ -540,9 +565,28 @@
 
   function itemCard(i, user){
     var cat = catByKey(i.category);
+    var mine = i.addedBy === user.name;
+
+    if (i.id === editingId){
+      return '' +
+        '<div class="card editing ' + cat.cls + '" data-id="' + i.id + '">' +
+          '<div class="card-body">' +
+            '<div class="edit-row">' +
+              '<input class="edit-input" id="editText-' + i.id + '" type="text" maxlength="140" value="' + esc(i.text) + '" />' +
+              '<select class="edit-select" id="editCat-' + i.id + '">' +
+                CATEGORIES.map(function(c){ return '<option value="' + c.key + '"' + (c.key===i.category?' selected':'') + '>' + c.label + '</option>'; }).join('') +
+              '</select>' +
+            '</div>' +
+            '<div class="edit-actions">' +
+              '<button class="edit-save" data-action="save-edit" data-id="' + i.id + '">Speichern</button>' +
+              '<button class="edit-cancel" data-action="cancel-edit" data-id="' + i.id + '">Abbrechen</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    }
+
     var liked = (i.likedBy||[]).indexOf(user.name) !== -1;
     var isMatch = (i.likedBy||[]).length >= 2;
-    var mine = i.addedBy === user.name;
     return '' +
       '<div class="card ' + cat.cls + (i.status==='erledigt' ? ' done' : '') + '" data-id="' + i.id + '">' +
         '<button class="check" data-action="toggle" data-id="' + i.id + '">' + iconCheck() + '</button>' +
@@ -557,6 +601,7 @@
         '</div>' +
         '<div class="card-actions">' +
           '<button class="icon-btn' + (liked?' liked':'') + '" data-action="like" data-id="' + i.id + '" title="Gefällt mir">' + iconHeart() + '</button>' +
+          (mine ? '<button class="icon-btn" data-action="edit" data-id="' + i.id + '" title="Bearbeiten">' + iconEdit() + '</button>' : '') +
           (mine ? '<button class="icon-btn" data-action="delete" data-id="' + i.id + '" title="Löschen">' + iconTrash() + '</button>' : '') +
         '</div>' +
       '</div>';
@@ -599,10 +644,9 @@
       el.addEventListener('click', function(){ input.value = el.getAttribute('data-suggest'); input.focus(); });
     });
 
-    var doneToggle = document.getElementById('doneToggle');
-    if (doneToggle){
-      doneToggle.addEventListener('click', function(){ doneOpen = !doneOpen; renderApp(); });
-    }
+    document.querySelectorAll('[data-tab]').forEach(function(el){
+      el.addEventListener('click', function(){ activeTab = el.getAttribute('data-tab'); renderApp(); });
+    });
 
     app.querySelectorAll('[data-action]').forEach(function(el){
       el.addEventListener('click', function(){
@@ -620,6 +664,23 @@
           ref.update({ likedBy: liked });
         } else if (action === 'delete'){
           ref.delete();
+        } else if (action === 'edit'){
+          editingId = id;
+          renderApp();
+        } else if (action === 'cancel-edit'){
+          editingId = null;
+          renderApp();
+        } else if (action === 'save-edit'){
+          var textInput = document.getElementById('editText-' + id);
+          var catSelect = document.getElementById('editCat-' + id);
+          var newText = textInput ? textInput.value.trim() : '';
+          if (!newText) return;
+          var newCategory = catSelect ? catSelect.value : item.category;
+          item.text = newText;
+          item.category = newCategory;
+          editingId = null;
+          renderApp();
+          ref.update({ text: newText, category: newCategory });
         }
       });
     });

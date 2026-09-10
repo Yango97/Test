@@ -1,4 +1,4 @@
-# Unsere Abenteuerliste
+# Unsere Bucket List
 
 Eine gemeinsame Liste für Dinge, die zwei Personen zusammen unternehmen wollen. Läuft als reine Webseite über GitHub Pages, keine Anmeldung nötig — für die gemeinsame Speicherung wird ein kostenloses Firebase-Projekt (Firestore) angebunden.
 
