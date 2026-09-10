@@ -101,6 +101,7 @@
   }
   #nameSubmit:disabled{ opacity:0.45; cursor:default; }
   .gate-hint{ font-size:0.78rem; color:var(--ink-faint); }
+  .gate-error{ font-size:0.82rem; color:var(--danger); margin:-8px 0 14px; min-height:1.1em; }
 
   .composer{
     background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
@@ -246,6 +247,7 @@
   function iconChevron(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg>'; }
   function iconCheck(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5 8 14l7.5-9"/></svg>'; }
   function iconCompassBig(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="10" cy="10" r="7.4"/><path d="M12.6 7.4 9.4 9.4 7.4 12.6 10.6 10.6Z" fill="currentColor" stroke="none"/></svg>'; }
+  function iconLock(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4.5" y="9" width="11" height="7.5" rx="1.6"/><path d="M6.8 9V6.3a3.2 3.2 0 0 1 6.4 0V9"/><circle cx="10" cy="12.6" r="1.1" fill="currentColor" stroke="none"/></svg>'; }
 
   function catByKey(k){ for (var i=0;i<CATEGORIES.length;i++) if (CATEGORIES[i].key===k) return CATEGORIES[i]; return CATEGORIES[0]; }
 
@@ -275,6 +277,7 @@
   }
 
   var LS_KEY = 'abenteuerliste:name';
+  var PASSCODE_LS_KEY = 'abenteuerliste:unlocked';
   var app = document.getElementById('app');
   var db = null;
   var items = [];
@@ -292,6 +295,47 @@
         '<h1>Fast fertig — Firebase fehlt noch</h1>' +
         '<p>Diese Seite braucht ein kostenloses Firebase-Projekt als Speicher für die gemeinsame Liste. Trage die Projektdaten in <code>firebase-config.js</code> ein (siehe <code>README.md</code> im Repository), dann lädt die Liste automatisch.</p>' +
       '</div>';
+  }
+
+  function needsPasscode(){
+    var code = window.APP_PASSCODE;
+    if (!code || code === 'DEIN_CODEWORT') return false;
+    return localStorage.getItem(PASSCODE_LS_KEY) !== '1';
+  }
+
+  function renderPasscodeGate(onSuccess){
+    app.innerHTML =
+      '<div class="gate">' +
+        '<div class="compass">' + iconLock() + '</div>' +
+        '<h1>Nur für uns zwei</h1>' +
+        '<p>Zum Öffnen bitte das gemeinsame Codewort eingeben.</p>' +
+        '<div class="gate-input-row">' +
+          '<input id="passInput" type="password" placeholder="Codewort" autocomplete="off" />' +
+          '<button id="passSubmit">Öffnen</button>' +
+        '</div>' +
+        '<div class="gate-error" id="passError"></div>' +
+      '</div>';
+
+    var input = document.getElementById('passInput');
+    var submit = document.getElementById('passSubmit');
+    var error = document.getElementById('passError');
+
+    input.addEventListener('keydown', function(e){ if (e.key === 'Enter') check(); });
+    submit.addEventListener('click', check);
+    input.focus();
+
+    function check(){
+      var v = input.value.trim().toLowerCase();
+      var expected = String(window.APP_PASSCODE || '').trim().toLowerCase();
+      if (v && v === expected){
+        localStorage.setItem(PASSCODE_LS_KEY, '1');
+        onSuccess();
+      } else {
+        error.textContent = 'Falsches Codewort — nochmal versuchen.';
+        input.value = '';
+        input.focus();
+      }
+    }
   }
 
   function renderGate(){
@@ -499,11 +543,7 @@
     renderApp();
   }
 
-  function start(){
-    if (!window.FIREBASE_CONFIG || window.FIREBASE_CONFIG.apiKey === 'DEIN_API_KEY'){
-      renderSetupNeeded();
-      return;
-    }
+  function initApp(){
     firebase.initializeApp(window.FIREBASE_CONFIG);
     db = firebase.firestore();
 
@@ -515,6 +555,18 @@
     }, function(err){
       if (me()) renderFallback('Verbindung zur Liste verloren (' + err.code + '). Bitte Seite neu laden.');
     });
+  }
+
+  function start(){
+    if (!window.FIREBASE_CONFIG || window.FIREBASE_CONFIG.apiKey === 'DEIN_API_KEY'){
+      renderSetupNeeded();
+      return;
+    }
+    if (needsPasscode()){
+      renderPasscodeGate(initApp);
+      return;
+    }
+    initApp();
   }
 
   start();

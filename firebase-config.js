@@ -9,3 +9,9 @@ window.FIREBASE_CONFIG = {
   messagingSenderId: "199811226689",
   appId: "1:199811226689:web:2d37638be064bb37f67ac0"
 };
+
+// Gemeinsames Codewort, das beim ersten Öffnen der Seite abgefragt wird.
+// Hält nur zufällige Besucher fern (kein echter Schutz, da das Repo
+// öffentlich ist und dieser Wert damit lesbar bleibt) - hier durch ein
+// eigenes Wort ersetzen.
+window.APP_PASSCODE = "DEIN_CODEWORT";
