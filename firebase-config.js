@@ -14,4 +14,4 @@ window.FIREBASE_CONFIG = {
 // Hält nur zufällige Besucher fern (kein echter Schutz, da das Repo
 // öffentlich ist und dieser Wert damit lesbar bleibt) - hier durch ein
 // eigenes Wort ersetzen.
-window.APP_PASSCODE = "DEIN_CODEWORT";
+window.APP_PASSCODE = "Coco&Yannik";
