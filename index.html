@@ -23,18 +23,31 @@
     --radius-lg:20px;
     --radius-md:14px;
     --radius-sm:9px;
+    --cat-ausflug-rgb:47,111,94;
+    --cat-essen-rgb:193,116,58;
+    --cat-kultur-rgb:125,90,140;
+    --cat-aktiv-rgb:62,127,176;
+    --cat-zuhause-rgb:166,124,61;
+    --cat-reise-rgb:47,111,138;
+    --skyline-rgb:28,36,32;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
       --bg:#121815; --surface:#1B2420; --surface-2:#233029; --ink:#E9F0EA;
       --ink-soft:#A6B5AC; --ink-faint:#6D7C73; --border:#2C3931; --accent:#67BC9E;
       --accent-ink:#0C1613; --accent-soft:#233A32; --danger:#E39178; --shadow:rgba(0,0,0,0.45);
+      --cat-ausflug-rgb:103,188,158; --cat-essen-rgb:224,158,110; --cat-kultur-rgb:196,164,209;
+      --cat-aktiv-rgb:138,184,224; --cat-zuhause-rgb:212,171,110; --cat-reise-rgb:110,178,204;
+      --skyline-rgb:233,240,234;
     }
   }
   :root[data-theme="dark"]{
     --bg:#121815; --surface:#1B2420; --surface-2:#233029; --ink:#E9F0EA;
     --ink-soft:#A6B5AC; --ink-faint:#6D7C73; --border:#2C3931; --accent:#67BC9E;
     --accent-ink:#0C1613; --accent-soft:#233A32; --danger:#E39178; --shadow:rgba(0,0,0,0.45);
+    --cat-ausflug-rgb:103,188,158; --cat-essen-rgb:224,158,110; --cat-kultur-rgb:196,164,209;
+    --cat-aktiv-rgb:138,184,224; --cat-zuhause-rgb:212,171,110; --cat-reise-rgb:110,178,204;
+    --skyline-rgb:233,240,234;
   }
 
   *{box-sizing:border-box;}
@@ -44,7 +57,7 @@
     background:var(--bg);
     color:var(--ink);
     font-family:'Manrope', ui-sans-serif, system-ui, sans-serif;
-    padding:0 20px 64px;
+    padding:28px 20px 64px;
   }
   .wrap{ max-width:760px; margin:0 auto; }
 
@@ -53,9 +66,22 @@
   a{ color:inherit; }
   button{ font-family:inherit; }
 
-  header.top{ padding:36px 0 18px; display:flex; flex-direction:column; gap:14px; }
+  .skyline{
+    margin:0 -20px; padding:0 20px; overflow:hidden; height:84px;
+    display:flex; align-items:flex-end;
+  }
+  .skyline svg{ width:100%; height:72px; display:block; color:rgba(var(--skyline-rgb),0.16); }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono', ui-monospace, monospace; text-transform:uppercase;
+    letter-spacing:0.12em; font-size:0.7rem; color:var(--accent); font-weight:500;
+  }
+  .eyebrow::before{ content:''; width:5px; height:5px; border-radius:50%; background:var(--accent); }
+
+  header.top{ padding:6px 0 18px; display:flex; flex-direction:column; gap:12px; }
   .top-row{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
-  .title-block h1{ font-size:2.4rem; margin:0 0 4px; line-height:1.05; }
+  .title-block h1{ font-size:2.6rem; margin:2px 0 4px; line-height:1.05; }
   .title-block p{ margin:0; color:var(--ink-soft); font-size:0.95rem; max-width:46ch; }
 
   .whoami{
@@ -131,13 +157,35 @@
   }
   .chip svg{ width:14px; height:14px; }
   .chip.active{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent); }
+  .chip.cat-ausflug.active{ background:rgba(var(--cat-ausflug-rgb),0.15); border-color:rgb(var(--cat-ausflug-rgb)); color:rgb(var(--cat-ausflug-rgb)); }
+  .chip.cat-essen.active{ background:rgba(var(--cat-essen-rgb),0.15); border-color:rgb(var(--cat-essen-rgb)); color:rgb(var(--cat-essen-rgb)); }
+  .chip.cat-kultur.active{ background:rgba(var(--cat-kultur-rgb),0.15); border-color:rgb(var(--cat-kultur-rgb)); color:rgb(var(--cat-kultur-rgb)); }
+  .chip.cat-aktiv.active{ background:rgba(var(--cat-aktiv-rgb),0.15); border-color:rgb(var(--cat-aktiv-rgb)); color:rgb(var(--cat-aktiv-rgb)); }
+  .chip.cat-zuhause.active{ background:rgba(var(--cat-zuhause-rgb),0.15); border-color:rgb(var(--cat-zuhause-rgb)); color:rgb(var(--cat-zuhause-rgb)); }
+  .chip.cat-reise.active{ background:rgba(var(--cat-reise-rgb),0.15); border-color:rgb(var(--cat-reise-rgb)); color:rgb(var(--cat-reise-rgb)); }
+
+  .meta-cat.cat-ausflug{ color:rgb(var(--cat-ausflug-rgb)); }
+  .meta-cat.cat-essen{ color:rgb(var(--cat-essen-rgb)); }
+  .meta-cat.cat-kultur{ color:rgb(var(--cat-kultur-rgb)); }
+  .meta-cat.cat-aktiv{ color:rgb(var(--cat-aktiv-rgb)); }
+  .meta-cat.cat-zuhause{ color:rgb(var(--cat-zuhause-rgb)); }
+  .meta-cat.cat-reise{ color:rgb(var(--cat-reise-rgb)); }
 
   section.list{ margin-top:22px; display:flex; flex-direction:column; gap:10px; }
 
   .card{
     display:flex; align-items:flex-start; gap:12px; background:var(--surface);
-    border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 14px 14px 12px;
+    border:1px solid var(--border); border-left-width:4px; border-radius:var(--radius-md);
+    padding:14px 14px 14px 12px; transition:box-shadow .15s ease, transform .15s ease;
   }
+  .card:hover{ box-shadow:0 4px 16px var(--shadow); transform:translateY(-1px); }
+  .card.cat-ausflug{ border-left-color:rgb(var(--cat-ausflug-rgb)); }
+  .card.cat-essen{ border-left-color:rgb(var(--cat-essen-rgb)); }
+  .card.cat-kultur{ border-left-color:rgb(var(--cat-kultur-rgb)); }
+  .card.cat-aktiv{ border-left-color:rgb(var(--cat-aktiv-rgb)); }
+  .card.cat-zuhause{ border-left-color:rgb(var(--cat-zuhause-rgb)); }
+  .card.cat-reise{ border-left-color:rgb(var(--cat-reise-rgb)); }
+  .card.done{ border-left-color:var(--border); }
   .check{
     width:22px; height:22px; border-radius:50%; border:1.6px solid var(--border);
     background:var(--bg); flex:none; cursor:pointer; margin-top:1px;
@@ -207,6 +255,11 @@
   }
   .setup-banner ol{ color:var(--ink-soft); line-height:1.7; padding-left:22px; }
 
+  @media (prefers-reduced-motion: reduce){
+    *{ transition-duration:0.01ms !important; }
+    .card:hover{ transform:none; }
+  }
+
   @media (max-width:480px){
     .title-block h1{ font-size:1.9rem; }
     .composer{ flex-direction:column; }
@@ -227,12 +280,12 @@
 <script>
 (function(){
   var CATEGORIES = [
-    { key:'ausflug', label:'Ausflüge', icon:iconCompass() },
-    { key:'essen',   label:'Essen & Trinken', icon:iconCup() },
-    { key:'kultur',  label:'Kultur', icon:iconTicket() },
-    { key:'aktiv',   label:'Aktiv & Sport', icon:iconMountain() },
-    { key:'zuhause', label:'Zuhause', icon:iconHouse() },
-    { key:'reise',   label:'Reisen', icon:iconPlane() },
+    { key:'ausflug', label:'Ausflüge', icon:iconCompass(), cls:'cat-ausflug' },
+    { key:'essen',   label:'Essen & Trinken', icon:iconCup(), cls:'cat-essen' },
+    { key:'kultur',  label:'Kultur', icon:iconTicket(), cls:'cat-kultur' },
+    { key:'aktiv',   label:'Aktiv & Sport', icon:iconMountain(), cls:'cat-aktiv' },
+    { key:'zuhause', label:'Zuhause', icon:iconHouse(), cls:'cat-zuhause' },
+    { key:'reise',   label:'Reisen', icon:iconPlane(), cls:'cat-reise' },
   ];
   var PALETTE = ['#C1552E','#4C5BA6','#B08B2A','#3E8F6E','#9457A6','#3E7FB0','#B0473F','#2F8F8A'];
 
@@ -247,6 +300,38 @@
   function iconChevron(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg>'; }
   function iconCheck(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5 8 14l7.5-9"/></svg>'; }
   function iconCompassBig(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="10" cy="10" r="7.4"/><path d="M12.6 7.4 9.4 9.4 7.4 12.6 10.6 10.6Z" fill="currentColor" stroke="none"/></svg>'; }
+  function skylineSvg(){
+    return '<svg viewBox="0 0 800 130" preserveAspectRatio="none" fill="currentColor">' +
+      '<rect x="0" y="108" width="800" height="2" opacity="0.5"/>' +
+      '<rect x="18" y="70" width="26" height="40"/>' +
+      '<rect x="54" y="88" width="20" height="22"/>' +
+      '<rect x="86" y="60" width="24" height="50"/>' +
+      '<polygon points="118,50 150,50 150,110 118,110"/>' +
+      '<rect x="132" y="30" width="4" height="20"/>' +
+      '<rect x="162" y="76" width="18" height="34"/>' +
+      '<polygon points="196,20 214,20 222,110 188,110"/>' +
+      '<rect x="236" y="64" width="22" height="46"/>' +
+      '<rect x="266" y="84" width="16" height="26"/>' +
+      '<polygon points="300,44 300,110 344,110 344,58 322,36"/>' +
+      '<rect x="360" y="72" width="20" height="38"/>' +
+      '<rect x="392" y="90" width="24" height="20"/>' +
+      '<rect x="428" y="66" width="18" height="44"/>' +
+      '<rect x="454" y="82" width="20" height="28"/>' +
+      '<polygon points="490,54 512,54 512,110 490,110"/>' +
+      '<circle cx="501" cy="42" r="7"/>' +
+      '<rect x="497" y="20" width="4" height="20"/>' +
+      '<rect x="532" y="78" width="22" height="32"/>' +
+      '<rect x="564" y="60" width="20" height="50"/>' +
+      '<rect x="592" y="88" width="18" height="22"/>' +
+      '<polygon points="620,66 646,66 646,110 620,110"/>' +
+      '<rect x="631" y="46" width="4" height="20"/>' +
+      '<rect x="664" y="82" width="20" height="28"/>' +
+      '<rect x="694" y="68" width="24" height="42"/>' +
+      '<rect x="728" y="90" width="18" height="20"/>' +
+      '<rect x="756" y="76" width="22" height="34"/>' +
+    '</svg>';
+  }
+
   function iconLock(){ return '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="4.5" y="9" width="11" height="7.5" rx="1.6"/><path d="M6.8 9V6.3a3.2 3.2 0 0 1 6.4 0V9"/><circle cx="10" cy="12.6" r="1.1" fill="currentColor" stroke="none"/></svg>'; }
 
   function catByKey(k){ for (var i=0;i<CATEGORIES.length;i++) if (CATEGORIES[i].key===k) return CATEGORIES[i]; return CATEGORIES[0]; }
@@ -305,7 +390,8 @@
 
   function renderPasscodeGate(onSuccess){
     app.innerHTML =
-      '<div class="gate">' +
+      '<div class="skyline" style="margin-top:14vh;">' + skylineSvg() + '</div>' +
+      '<div class="gate" style="margin-top:0;">' +
         '<div class="compass">' + iconLock() + '</div>' +
         '<h1>Nur für uns zwei</h1>' +
         '<p>Zum Öffnen bitte das gemeinsame Codewort eingeben.</p>' +
@@ -340,7 +426,8 @@
 
   function renderGate(){
     app.innerHTML =
-      '<div class="gate">' +
+      '<div class="skyline" style="margin-top:14vh;">' + skylineSvg() + '</div>' +
+      '<div class="gate" style="margin-top:0;">' +
         '<div class="compass">' + iconCompassBig() + '</div>' +
         '<h1>Unsere Abenteuerliste</h1>' +
         '<p>Bevor es losgeht: Wie sollen wir dich hier nennen?</p>' +
@@ -386,9 +473,10 @@
     var pct = total ? Math.round(doneCount/total*100) : 0;
 
     var html = '';
+    html += '<div class="skyline">' + skylineSvg() + '</div>';
     html += '<header class="top">';
     html += '  <div class="top-row">';
-    html += '    <div class="title-block"><h1>Unsere Abenteuerliste</h1><p>Alles, was wir zusammen erleben wollen — einer trägt es ein, beide können abhaken.</p></div>';
+    html += '    <div class="title-block"><span class="eyebrow">Frankfurt &amp; Umgebung</span><h1>Unsere Abenteuerliste</h1><p>Alles, was wir zusammen erleben wollen — einer trägt es ein, beide können abhaken.</p></div>';
     html += '    <div class="whoami"><span class="dot" style="background:' + user.color + '"></span>' + esc(user.name) + '<button id="changeName">ändern</button></div>';
     html += '  </div>';
     if (total > 0){
@@ -405,7 +493,7 @@
     html += '<div class="filters">';
     html += '  <button class="chip' + (filter==='all'?' active':'') + '" data-filter="all">Alle</button>';
     CATEGORIES.forEach(function(c){
-      html += '  <button class="chip' + (filter===c.key?' active':'') + '" data-filter="' + c.key + '">' + c.icon + c.label + '</button>';
+      html += '  <button class="chip ' + c.cls + (filter===c.key?' active':'') + '" data-filter="' + c.key + '">' + c.icon + c.label + '</button>';
     });
     html += '  <button class="chip' + (filter==='favs'?' active':'') + '" data-filter="favs">' + iconHeart() + 'Beide wollen das</button>';
     html += '</div>';
@@ -456,12 +544,12 @@
     var isMatch = (i.likedBy||[]).length >= 2;
     var mine = i.addedBy === user.name;
     return '' +
-      '<div class="card' + (i.status==='erledigt' ? ' done' : '') + '" data-id="' + i.id + '">' +
+      '<div class="card ' + cat.cls + (i.status==='erledigt' ? ' done' : '') + '" data-id="' + i.id + '">' +
         '<button class="check" data-action="toggle" data-id="' + i.id + '">' + iconCheck() + '</button>' +
         '<div class="card-body">' +
           '<div class="card-text">' + esc(i.text) + '</div>' +
           '<div class="card-meta">' +
-            '<span class="meta-cat">' + cat.icon + cat.label + '</span>' +
+            '<span class="meta-cat ' + cat.cls + '">' + cat.icon + cat.label + '</span>' +
             '<span class="meta-who"><span class="dot" style="background:' + (i.addedByColor||'#999') + '"></span>' + esc(i.addedBy) + '</span>' +
             '<span>' + timeAgo(i.createdAt||Date.now()) + '</span>' +
             (isMatch ? '<span class="match-badge">' + iconHeart() + 'Beide dabei</span>' : '') +
